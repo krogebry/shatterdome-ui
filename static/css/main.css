@@ -1,0 +1,47 @@
+body{ }
+
+.header{
+    color: white;
+    width: 100%;
+    background-color: black;
+}
+.header .title {
+    font-size: 14pt;
+    text-align: left;
+    vertical-align: center;
+}
+
+.header .logo img {
+    height: 100px;
+}
+
+.header .actions{
+    text-align: right;
+}
+.header .actions a {
+    color: white;
+}
+
+.main {
+    width: 100%;
+    border: 0px solid black;
+    height: 80%;
+}
+.main .left {
+    width: 10%;
+    border: 0px solid black;
+    vertical-align: top;
+    background-color: #efefef;
+    padding: 10px;
+}
+
+.main .data {
+    width: 90%;
+    vertical-align: top;
+}
+
+.button_bar {
+    padding: 10px;
+    padding: 10px;
+}
+

@@ -1,0 +1,15 @@
+<h1>Packages</h1>
+
+<a href="/package/create">Create new package.</a>
+
+<% packages.each do |package| %>
+  <h3><a href="/package/<%= package['name'] %>/launch"><%= package['name'] %></a></h3>
+
+  <div><%= package['description'] %></div>
+
+  <h4>Services</h4>
+  <% package['services'].each do |p_service| %>
+    <div><%= p_service['type'] %></div>
+  <% end %>
+<% end %>
+
