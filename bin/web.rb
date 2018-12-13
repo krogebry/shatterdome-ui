@@ -38,9 +38,9 @@ end
 
 helpers Sinatra::EasyBreadcrumbs
 
-# require 'shatterdome/stack.rb'
-# require 'shatterdome/worker.rb'
+require 'shatterdome/stack'
 
 require "shatterdome-ui/version"
 require "#{WEB_ROOT}/routes/main.rb"
+require "#{WEB_ROOT}/routes/package.rb"
 

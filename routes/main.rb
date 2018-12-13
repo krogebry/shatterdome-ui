@@ -1,5 +1,5 @@
 get '/' do
-  "I like Famliy Guy."
+  erb :index
 end
 
 get '/version' do
@@ -9,3 +9,4 @@ end
 get '/healthz' do
   {success: true}.to_json
 end
+
