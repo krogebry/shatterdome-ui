@@ -1,0 +1,121 @@
+<script>
+  $(function(){
+      let selected_stack_name = null;
+
+      $("#accordion").collapse();
+      $("#accordion").on("shown.bs.collapse", function(e){
+          let selected = $(e.target);
+          console.log(selected.attr('id'));
+          selected_stack_name = selected.attr('id');
+      });
+
+      $("#submit").on("click", function(e){
+          console.log("Submitting form");
+
+          let stack_name = $("#stack_name").val();
+          let stack_version = $("#stack_version").val();
+
+          let params = {
+              stack_name: stack_name,
+              stack_version: stack_version
+          };
+
+          // console.log(selected_stack_name);
+
+          if(selected_stack_name == null || selected_stack_name == 'accordion'){
+              alert("Please select a stack");
+              return;
+          }
+
+          $("#"+selected_stack_name+" select").each(function(i){
+              // console.log($(this).val());
+              let el = $(this);
+              params[el.attr('id')] = el.val();
+          });
+
+          params['stack_type'] = $("#"+selected_stack_name).attr('stack-type');
+
+          $.ajax({
+              url: '/api/1.0/stack/create',
+              data: params,
+              method: 'post',
+              processData: true,
+              success: function(r, status){
+                  console.log(r.success)
+              }
+          });
+
+      });
+  })
+</script>
+
+<table style="width: 100%;">
+  <tr>
+    <td>
+      <div class="container">
+        <h1 class="form-heading">Create new Stack</h1>
+        <div class="create-form">
+          <div class="main-div">
+              <div class="form-group">
+                <input class="form-control" name="stack_name" id="stack_name" value="test" placeholder="Name">
+              </div>
+
+              <div class="form-group">
+                <input class="form-control" name="stack_version" id="stack_version" placeholder="Version" value="0.1.0">
+              </div>
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr><tr>
+
+    <td>
+      <div id="accordion">
+        <div class="card">
+          <div class="card-header" id="heading-network">
+            <h5 class="mb-0">
+              <button class="btn btn-link" data-toggle="collapse" data-target="#details-network" aria-expanded="true" aria-controls="details-network">
+                Network
+              </button>
+            </h5>
+          </div>
+          <div id="details-network" class="collapse" data-toggle="collapse" aria-labelledby="heading-network" data-parent="#accordion">
+            <div class="card-body">
+              Network options.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header" id="heading-openvpn">
+            <h5 class="mb-0">
+              <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#details-openvpn" aria-expanded="false" aria-controls="details-openvpn">
+                OpenVPN Gateway
+              </button>
+            </h5>
+          </div>
+          <div id="details-openvpn" class="collapse" stack-type="OpenVPN" aria-labelledby="heading-openvpn" data-parent="#accordion">
+            <div class="card-body">
+
+              <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Size</label>
+              <select class="custom-select my-1 mr-sm-2" id="stack_size">
+                <option selected value="small">Small</option>
+                <option value="medium">Medium</option>
+                <option value="large">Large</option>
+              </select>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </td>
+
+  </tr>
+  <tr>
+    <td style="text-align:right;">
+      <button id="submit" type="submit" class="btn btn-primary">Next</button>
+    </td>
+  </tr>
+</table>
+

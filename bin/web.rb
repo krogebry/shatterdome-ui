@@ -9,17 +9,15 @@ require 'shatterdome/shatterdome'
 
 $LOAD_PATH.push('lib') if File.path(__FILE__).match(/\./)
 
-# if ENV.has_key?('WEB_ROOT')
-  # WEB_ROOT = File.absolute_path(ENV['WEB_ROOT'])
-# else
 WEB_ROOT = File.absolute_path(File.join(File.path(__FILE__), '..', '..' ))
-# end
 
 MEMC_HOST = ENV['MEMC_HOST'] || 'localhost'
 MEMC_PORT = ENV['MEMC_PORT'] || 11211
 
 options = { :namespace => 'dev', :compress => false }
 CACHE = Shatterdome::Memcache.new( "#{MEMC_HOST}:#{MEMC_PORT}" , options)
+
+LOG = Logger.new(STDOUT)
 
 set :bind, '0.0.0.0'
 set :views, File.join(WEB_ROOT, 'views')
@@ -41,6 +39,9 @@ helpers Sinatra::EasyBreadcrumbs
 require 'shatterdome/stack'
 
 require "shatterdome-ui/version"
+require "#{WEB_ROOT}/routes/api.rb"
 require "#{WEB_ROOT}/routes/main.rb"
+require "#{WEB_ROOT}/routes/auth.rb"
+require "#{WEB_ROOT}/routes/stack.rb"
 require "#{WEB_ROOT}/routes/package.rb"
 
