@@ -1,0 +1,58 @@
+<style type="text/css">
+  .button_bar {
+    padding-bottom: 10px;
+  }
+</style>
+
+<script type="text/javascript">
+    $( document ).ready(function() {
+        $("#refresh_list").click(function(){
+            $.ajax({
+                url: '/flush_cache',
+                complete: function(){
+                    dt.ajax.reload();
+                }
+            })
+        });
+
+        var dt = $('#stacks').DataTable({
+            ordering: true,
+            serverSide: true,
+            ajax: "/api/1.0/stacks",
+            columns: [
+                {
+                    data: 'stack_name',
+                    name: 'stack_name',
+                    render: function ( data, type, row, meta ) {
+                        return '<a href="/stack/'+data+'">'+data+'</a>';
+                    }
+                },
+                { data: 'owner', name: 'owner' },
+                { data: 'type', name: 'type' }
+            ],
+        });
+    });
+</script>
+
+<div class="button_bar">
+  <div class="dropdown">
+    <button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">Stack actions
+      <span class="caret"></span></button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+      <li role="presentation"><a href="#" id="refresh_list">Refresh</a></li>
+      <li role="presentation" class="divider"></li>
+      <li role="presentation"><a role="menuitem" tabindex="-1" href="/stack/create">Create stack</a></li>
+    </ul>
+  </div>
+</div>
+
+<table id="stacks" class="display" style="width:100%">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Owner</th>
+    <th>Stack Type</th>
+  </tr>
+  </thead>
+</table>
+

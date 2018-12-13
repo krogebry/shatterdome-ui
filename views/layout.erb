@@ -1,106 +1,119 @@
-<html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
-  <script src="/js/jquery-3.3.1.min.js"></script>
-  <script src="/js/jquery-ui.js"></script>
-  <link rel="stylesheet" href="/css/jquery-ui.min.css">
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/ju/dt-1.10.18/datatables.min.css"/>
-  <script type="text/javascript" src="https://cdn.datatables.net/v/ju/dt-1.10.18/datatables.min.js"></script>
-
-  <style type="text/css">
-    body {
-    }
-
-    .err, .ok {
-      margin: 0.3em 0;
-      padding: 5px 7px;
-      text-align: center;
-      color: #000000;
-    }
-
-    .header {
-      color: white;
-      width: 100%;
-      background-color: black;
-    }
-
-    .header .title {
-      font-size: 14pt;
-      text-align: left;
-      vertical-align: center;
-    }
-
-    .header .logo img {
-      height: 100px;
-    }
-
-    .header .actions {
-      text-align: right;
-    }
-
-    .header .actions a {
-      color: white;
-    }
-
-    .main {
-      width: 100%;
-      border: 0px solid black;
-    }
-
-    .main .content {
-      width: 100%;
-      vertical-align: top;
-      padding: 10px;
-    }
-  </style>
+  <title>Cloud Manager</title>
 </head>
 
 <body>
 
-<table class="header">
-  <tr>
-    <td class="logo">Logo</td>
-    <td class="title">
-      Shatterdome Web UI ( <%= ShatterdomeUI::VERSION %> )
-    </td>
-    <td class="actions">
-      <% if session['user'] %>
-        <a href="/auth/logout">Logout (<%= session['user'] %></a>)
-      <% else %>
-        <a href="/auth/login">Login</a>
-      <% end %>
-    </td>
-  </tr>
-</table>
+<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+  <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">EDOS</a>
+  <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+  <ul class="navbar-nav px-3">
+    <li class="nav-item text-nowrap">
+      <a class="nav-link" href="#">Sign out</a>
+    </li>
+  </ul>
+</nav>
 
-<table class="main">
-  <tr>
-    <td class="breadcrum">
-      <%= easy_breadcrumbs %>
-    </td>
-  </tr>
-  <tr>
-    <td class="flash">
-      <% if flash.has?(:err) %>
-        <h3 class="err"><%= flash[:err] %></h3>
-      <% end %>
+<div class="container-fluid">
+  <div class="row">
+    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+      <div class="sidebar-sticky">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link active" href="#">
+              <span data-feather="home"></span>
+              Dashboard <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <span data-feather="file"></span>
+              Orders
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <span data-feather="shopping-cart"></span>
+              Products
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <span data-feather="users"></span>
+              Customers
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <span data-feather="bar-chart-2"></span>
+              Reports
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <span data-feather="layers"></span>
+              Integrations
+            </a>
+          </li>
+        </ul>
 
-      <% if flash.has?(:ok) %>
-        <h3 class="ok"><%= flash[:ok] %></h3>
-      <% end %>
-    </td>
-  </tr>
-  <tr>
-    <td class="content">
-      <%= yield %>
-    </td>
-  </tr>
-</table>
+        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+          <span>Saved reports</span>
+          <a class="d-flex align-items-center text-muted" href="#">
+            <span data-feather="plus-circle"></span>
+          </a>
+        </h6>
+        <ul class="nav flex-column mb-2">
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <span data-feather="file-text"></span>
+              Current month
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <span data-feather="file-text"></span>
+              Last quarter
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <span data-feather="file-text"></span>
+              Social engagement
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <span data-feather="file-text"></span>
+              Year-end sale
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+<%= yield %>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+<script>
+    feather.replace()
+</script>
 
 </body>
 </html>
