@@ -1,0 +1,5 @@
+.idea
+*.gem
+coverage
+packer/shatterdome-*.json
+Gemfile.lock
