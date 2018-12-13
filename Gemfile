@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+source 'http://10.0.3.15:9292'
 
 gem 'aws-sdk'
 gem 'shatterdome', '= 0.1.4'
