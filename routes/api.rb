@@ -1,18 +1,26 @@
 
+get '/api/1.0/flush_cache' do
+  CACHE.flush
+  {success: true}.to_json
+end
+
 get '/api/1.0/stacks' do
-  stacks = Shatterdome.get_stacks({}).map{|c| c['stack_name']}
+  stacks = Shatterdome.get_stacks({})
 
   pp stacks
 
   data = []
 
-  stacks.each do |stack_name|
+  stacks.each do |stack|
     data.push({
-                  stack_name: stack_name,
+                  stack_name: stack['stack_name'],
+                  status: stack['stack_status'],
                   owner: 'owner',
                   type: 'type'
               })
   end
+
+  pp data
 
   {data: data}.to_json
 end
