@@ -21,6 +21,7 @@
 - type: OpenVPN
   elements:
     - network
+    - openvpn
 - type: ECSCluster
   elements:
     - network

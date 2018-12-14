@@ -1,0 +1,10 @@
+<div class="form-group">
+  <div class="form-group col-md-6">
+    <label for="ami">Open VPN AMI</label>
+    <select id="ami" name="ami" class="form-control">
+      <% versions.each do |version| %>
+        <option value="<%= version %>"><%= version %></option>
+      <% end %>
+    </select>
+  </div>
+</div>

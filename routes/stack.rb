@@ -48,6 +48,7 @@ post '/stack/create' do
     }
   end
 
+  ## Specific hook for ECSService.
   if params.has_key?('port')
     config['dns'] = {
         name: params['dns'],
@@ -58,12 +59,8 @@ post '/stack/create' do
     config['ports'] = [params['port'].to_i]
     config['health_check'] = {
       url: params['health_check_url'],
-      code: params['health_check_port']
+      code: params['health_check_code']
     }
-
-    # cpu: 1024
-    # num: 1
-    # mem: 500
 
     config['cpu'] = 1024
     config['num'] = 1
@@ -77,19 +74,24 @@ post '/stack/create' do
     }
 
     stack = Shatterdome.get_stack_by_name(params['cluster'])
-    # pp params['cluster'].scan(/$(.*)-([0-9]-[0-9]-[0-9])^/)[0]
-    # (cluster_name, cluster_version) = params['cluster'].scan(/$(.*)-([0-9]-[0-9]-[0-9])^/)[0]
     config['cluster_name'] = stack['tags'].select{|t| t['key'] == 'Name' }.first['value']
     config['cluster_version'] = stack['tags'].select{|t| t['key'] == 'Version' }.first['value']
   end
 
-  # begin
-  #   unless params['config'].empty?
-  #     config = YAML.safe_load(params['config'])
-  #   end
-  # rescue => e
-  #   LOG.fatal("Unable to parse config: #{e}")
-  # end
+  if params['stack_type'] == 'OpenVPN'
+    config['ami'] = {Version: params['ami']}
+  end
+
+  config['capacity'] = { min: 1, max: 1, desired: 1 }
+
+  config['capacity']['type'] = case params['stack_size']
+                               when 'small'
+                                 't2.micro'
+                               when 'medium'
+                                 't2.large'
+                               when 'large'
+                                 'c4.large'
+                               end
 
   job = {
       name: params['stack_name'],
