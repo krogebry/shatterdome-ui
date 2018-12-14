@@ -13,3 +13,12 @@ gem 'easy_breadcrumbs'
 gem 'dalli'
 gem 'sinatra-dalli'
 gem 'sinatra-session'
+
+## Things for Shatterdome
+gem 'thor'
+gem 'netaddr', '=1.5.1'
+
+gem 'colorize'
+gem 'deep_merge'
+gem 'ruby_deep_clone'
+

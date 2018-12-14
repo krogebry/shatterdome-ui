@@ -33,15 +33,23 @@ get '/api/1.0/stack/elements/:stack_type' do
 
   content = ""
   el['elements'].each do |el_name|
-    if params['stack_type']  == 'ECSService'
+    if params['stack_type']  == 'ECSService' && el_name == 'ecsservice'
       zones = Shatterdome.get_hosted_zones['hosted_zones']
       clusters = Shatterdome.get_stacks({Role: 'Cluster'})
       content += erb "stack/elements/#{el_name}".to_sym, {layout: :empty, locals: {clusters: clusters, zones: zones}}
+
+    elsif params['stack_type'] == 'OpenVPN' && el_name == 'openvpn'
+      amis = Shatterdome.get_amis({Role: 'OpenVPN'}, {'is-public' => false})
+      versions = amis.map{|ami| ami['tags'].select{|t| t['key'] == 'Version'}.first['value']}
+      content += erb "stack/elements/#{el_name}".to_sym, {layout: :empty, locals: {versions: versions}}
+
     else
       content += erb "stack/elements/#{el_name}".to_sym, {layout: :empty}
+
     end
   end
 
   content_type 'application/json'
   {success: true, content: content}.to_json
 end
+
