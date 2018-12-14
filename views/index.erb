@@ -1,4 +1,40 @@
+<script>
+    $(document).ready(function () {
+        $('#stacks').DataTable({
+            ajax: '/api/1.0/stacks',
+            serverSide: true,
+            columns: [
+                {
+                    data: 'stack_name',
+                    name: 'stack_name',
+                    render: function (data, type, row, meta) {
+                        return '<a href="/stack/' + data + '">' + data + '</a>';
+                    }
+                },
+                {data: 'owner', name: 'owner'},
+                {data: 'type', name: 'type'},
+                {data: 'status', name: 'status'}
+            ],
+        });
+    });
+</script>
 
-<div><a href="/stacks">Stacks</a></div>
+<table id="stacks" class="table table-stripped table-bordered" style="width:100%">
+  <thead>
+  <tr>
+    <th>Stack name</th>
+    <th>Owner</th>
+    <th>Type</th>
+    <th>Status</th>
+  </tr>
+  </thead>
 
-<div><a href="/package">Packages</a></div>
+  <tfoot>
+  <tr>
+    <th>Stack name</th>
+    <th>Owner</th>
+    <th>Type</th>
+    <th>Status</th>
+  </tr>
+  </tfoot>
+</table>
