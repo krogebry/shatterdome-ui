@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'json'
+require 'mongo'
 require 'sinatra'
 require 'easy_breadcrumbs'
 require 'rack/session/dalli'
@@ -16,6 +17,12 @@ MEMC_PORT = ENV['MEMC_PORT'] || 11211
 
 options = { :namespace => 'dev', :compress => false }
 CACHE = Shatterdome::Memcache.new( "#{MEMC_HOST}:#{MEMC_PORT}" , options)
+
+DB_HOST = ENV['DB_HOST'] || 'localhost'
+DB_PORT = ENV['DB_PORT'] || 27017
+
+Mongo::Logger.logger.level = ::Logger::FATAL
+DB = Mongo::Client.new(["#{DB_HOST}:#{DB_PORT}"], database: 'shatterdome-ui')
 
 LOG = Logger.new(STDOUT)
 

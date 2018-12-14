@@ -4,6 +4,8 @@ source 'http://10.0.3.15:9292'
 gem 'aws-sdk'
 gem 'shatterdome', '= 0.1.7'
 
+gem 'mongo'
+
 gem 'rack'
 gem 'sinatra-static'
 gem 'sinatra-static-assets'

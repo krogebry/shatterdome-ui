@@ -1,3 +1,24 @@
+def api_authenticate
+  auth = false
+
+  if session['user']
+    auth = true
+    LOG.debug(format('Authenticated as: %s', session['user']))
+    # elsif params['api_key']
+    # LOG.debug(format('Using api key: %s', session['api_key']))
+  end
+
+  unless auth
+    ## return 503
+  end
+end
+
+get '/api/1.0/save' do
+  data = params.merge({ owner_email: session['user'] })
+  pp data
+  DB['saved_launches'].insert_one(data)
+  {success: true}.to_json
+end
 
 get '/api/1.0/flush_cache' do
   CACHE.flush

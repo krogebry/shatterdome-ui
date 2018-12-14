@@ -20,6 +20,30 @@
                 }
             })
         });
+
+        $("#save").on('click', function(e){
+            console.log('Saving config');
+            fields = {
+                stack_name: $("#stack_name").val(),
+                stack_type: $("#stack_type").val(),
+                stack_size: $("#stack_size").val(),
+                stack_version: $("#stack_version").val()
+            };
+
+            el.find(":input").each(function(i){
+                let input_el = $(this);
+                fields[input_el.attr('name')] = input_el.val();
+            });
+            console.log(fields);
+
+            $.ajax({
+                url: "/api/1.0/save",
+                data: fields,
+                success: function(r, s){
+                    console.log(s);
+                }
+            })
+        })
     })
 </script>
 
@@ -31,11 +55,11 @@
         <div class="form-row">
           <div class="form-group col-md-6">
             <label for="stack_name">Name</label>
-            <input class="form-control" name="stack_name" id="stack_name" placeholder="Name">
+            <input class="form-control" name="stack_name" id="stack_name" value="name" placeholder="Name">
           </div>
           <div class="form-group col-md-6">
             <label for="stack_version">Version</label>
-            <input class="form-control" name="stack_version" id="stack_version" placeholder="0.1.0">
+            <input class="form-control" name="stack_version" id="stack_version" value="0.1.0" placeholder="0.1.0">
           </div>
         </div>
 
@@ -62,7 +86,12 @@
 
         <div id="options" class="hidden"> </div>
 
-        <button type="submit" class="btn btn-primary">Create</button>
+        <table style="width: 100%">
+          <tr>
+            <td style="text-align: left"> <button type="button" id="save" class="btn btn-primary">Save this configuration</button> </td>
+            <td style="text-align: right"> <button type="submit" class="btn btn-primary">Create</button> </td>
+          </tr>
+        </table>
       </form>
 
     </td>
