@@ -1,0 +1,30 @@
+---
+- type: ChefServer
+  elements:
+    - network
+- type: SensuServer
+  elements:
+    - network
+- type: ESMemcache
+  elements:
+    - network
+- type: DNSForwarder
+  elements:
+    - network
+- type: ElasticFileSystem
+  elements:
+    - network
+- type: RDSInstance
+  elements:
+    - network
+    - rds_instance
+- type: OpenVPN
+  elements:
+    - network
+- type: ECSCluster
+  elements:
+    - network
+- type: ECSService
+  elements:
+    - network
+    - ecs_service

@@ -1,104 +1,70 @@
+<style type="text/css">
+  .hidden{
+    display: none;
+  }
+</style>
+
 <script>
-  $(function(){
-      let selected_stack_name = null;
+    $(function () {
+        let el = $("#options");
 
-      $("#accordion").collapse();
-      $("#accordion").on("shown.bs.collapse", function(e){
-          let selected = $(e.target);
-          console.log(selected.attr('id'));
-          selected_stack_name = selected.attr('id');
-      });
-
-      $("#submit").on("click", function(e){
-          console.log("Submitting form");
-
-          let stack_name = $("#stack_name").val();
-          let stack_size = $("#stack_size").val();
-          let stack_version = $("#stack_version").val();
-          let network = $("#network").val();
-
-          let params = {
-              network: network,
-              stack_name: stack_name,
-              stack_size: stack_size,
-              stack_version: stack_version
-          };
-
-          if(selected_stack_name == null || selected_stack_name == 'accordion'){
-              alert("Please select a stack");
-              return;
-          }
-
-          params['stack_type'] = $("#"+selected_stack_name).attr('stack-type');
-
-          $.ajax({
-              url: '/api/1.0/stack/create',
-              data: params,
-              method: 'post',
-              processData: true,
-              success: function(r, status){
-                  console.log(r.success)
-              }
-          });
-
-      });
-  })
+        $("#stack_type").on('change', function(e){
+            let stack_type = $("#stack_type option:selected").val();
+            $.ajax({
+                url: "/api/1.0/stack/elements/"+ stack_type,
+                processData: true,
+                success: function(data, r){
+                    el.empty();
+                    el.append(data.content);
+                    el.show();
+                }
+            })
+        });
+    })
 </script>
 
 <table style="width: 100%;">
   <tr>
     <td>
-      <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Name</label>
-      <input class="form-control" name="stack_name" id="stack_name" value="" placeholder="Name">
 
-      <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Version</label>
-      <input class="form-control" name="stack_version" id="stack_version" placeholder="Version" value="0.1.0">
-
-    </td><td>
-      <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Size</label>
-      <select class="custom-select my-1 mr-sm-2" id="stack_size">
-        <option selected value="small">Small</option>
-        <option value="medium">Medium</option>
-        <option value="large">Large</option>
-      </select>
-
-      <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Network</label>
-      <select class="custom-select my-1 mr-sm-2" id="network">
-        <option selected value="development">Development</option>
-        <option value="production">Production</option>
-        <option value="management">Management</option>
-      </select>
-
-    </td>
-  </tr><tr>
-    <td colspan="2">
-      <div id="accordion">
-
-        <% stacks.each do |s| %>
-        <div class="card">
-          <div class="card-header" id="heading-<%= s[:stack_class_name] %>">
-            <h5 class="mb-0">
-              <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#details-<%= s[:stack_class_name] %>" aria-expanded="false" aria-controls="details-<%= s[:stack_class_name] %>">
-                <%= s[:stack_class_name] %>
-              </button>
-            </h5>
+      <form action="/stack/create" method="POST">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="stack_name">Name</label>
+            <input class="form-control" name="stack_name" id="stack_name" placeholder="Name">
           </div>
-          <div id="details-<%= s[:stack_class_name] %>" class="collapse" stack-type="<%= s[:stack_class_name] %>" aria-labelledby="heading-<%= s[:stack_class_name] %>" data-parent="#accordion">
-            <div class="card-body">
-              <%= s[:description] %>
-            </div>
+          <div class="form-group col-md-6">
+            <label for="stack_version">Version</label>
+            <input class="form-control" name="stack_version" id="stack_version" placeholder="0.1.0">
           </div>
         </div>
-        <% end %>
 
-      </div>
-    </td>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="stack_size">Size</label>
+            <select id="stack_size" name="stack_size" class="form-control">
+              <option selected value="small">Small</option>
+              <option value="medium">Medium</option>
+              <option value="large">Large</option>
+            </select>
+          </div>
 
-  </tr>
-  <tr>
-    <td colspan="2" style="text-align:right;">
-      <button id="submit" type="submit" class="btn btn-primary">Next</button>
+          <div class="form-group col-md-6">
+            <label for="stack_type">Type</label>
+            <select id="stack_type" name="stack_type" class="form-control">
+              <option slected>Select</option>
+              <% stacks.each do |s| %>
+                <option value="<%= s[:stack_class_name] %>"><%= s[:stack_class_name] %></option>
+              <% end %>
+            </select>
+          </div>
+        </div>
+
+        <div id="options" class="hidden"> </div>
+
+        <button type="submit" class="btn btn-primary">Create</button>
+      </form>
+
     </td>
   </tr>
 </table>
-

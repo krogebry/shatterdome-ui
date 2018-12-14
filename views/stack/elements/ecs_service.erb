@@ -1,0 +1,60 @@
+<div class="form-row">
+  <div class="form-group col-md-6">
+    <label for="health_check_url">Health check</label>
+    <input id="health_check_url" name="health_check_url" class="form-control" value="/healthz"/>
+  </div>
+
+  <div class="form-group col-md-6">
+    <label for="health_check_code">Health check status code</label>
+    <input id="health_check_code" name="health_check_code" class="form-control" value="200"/>
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group col-md-6">
+    <label for="port">Port</label>
+    <input id="port" name="port" class="form-control" value="8080"/>
+  </div>
+  <div class="form-group col-md-6">
+    <label for="public">Public</label>
+    <input type="checkbox" id="public" name="public" class="form-control" selected/>
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group col-md-6">
+    <label for="dns">DNS Name</label>
+    <input type="text" id="dns" name="dns" class="form-control"/>
+  </div>
+  <div class="form-group col-md-6">
+    <label for="dns">DNS</label>
+    <select id="dns_domain" name="dns_domain" class="form-control">
+      <% zones.each do |domain| %>
+        <option value="<%= domain['name'] %>"><%= domain['name'] %></option>
+      <% end %>
+    </select>
+  </div>
+</div>
+
+<div class="form-group">
+  <div class="form-group col-md-6">
+    <label for="cluster">Cluser</label>
+    <select id="cluster" name="cluster" class="form-control">
+      <% clusters.each do |cluster| %>
+        <option value="<%= cluster['stack_name'] %>"><%= cluster['stack_name'] %></option>
+      <% end %>
+    </select>
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group col-md-6">
+    <label for="image">ECR repo</label>
+    <input id="image" name="image" class="form-control"/>
+  </div>
+  <div class="form-group col-md-6">
+    <label for="label">Label</label>
+    <input type="text" id="label" name="label" class="form-control"/>
+  </div>
+</div>
+
