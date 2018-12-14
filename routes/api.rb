@@ -25,26 +25,23 @@ get '/api/1.0/stacks' do
   {data: data}.to_json
 end
 
-post '/api/1.0/stack/create' do
-  pp params
+get '/api/1.0/stack/elements/:stack_type' do
+  config = Psych.safe_load(File.read(File.join('etc', 'stacks.yaml')), [], [], true)
+  el = config.select{|c| c['type'] == params['stack_type']}.first
 
-  job = {
-      name: params['stack_name'],
-      type: params['stack_type'],
-      size: params['stack_size'],
-      network: params['network'],
-      version: params['stack_version']
-  }
+  el = { 'elements' => [] } if el.nil?
 
-  queue_url = "https://sqs.#{ENV['AWS_REGION']}.amazonaws.com/#{ENV['AWS_ACCOUNT_ID']}/shatterdome_stacks"
-
-  @client = Shatterdome.get_client('sqs')
-  resp = @client.send_message({
-                                  queue_url: queue_url,
-                                  message_body: job.to_json,
-                                  delay_seconds: 1
-                              })
+  content = ""
+  el['elements'].each do |el_name|
+    if params['stack_type']  == 'ECSService'
+      zones = Shatterdome.get_hosted_zones['hosted_zones']
+      clusters = Shatterdome.get_stacks({Role: 'Cluster'})
+      content += erb "stack/elements/#{el_name}".to_sym, {layout: :empty, locals: {clusters: clusters, zones: zones}}
+    else
+      content += erb "stack/elements/#{el_name}".to_sym, {layout: :empty}
+    end
+  end
 
   content_type 'application/json'
-  {data: params, success: false}.to_json
+  {success: true, content: content}.to_json
 end
