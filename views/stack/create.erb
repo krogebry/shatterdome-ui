@@ -61,7 +61,6 @@ $(function () {
         $('#stack_type option:contains("<%= params['stack_type'] %>")').prop('selected', true).change();
         <% end %>
     })
-
 </script>
 
 <table style="width: 100%;">
@@ -73,16 +72,10 @@ $(function () {
           <div class="form-group col-md-6">
             <label for="stack_name">Name</label>
             <input class="form-control" name="stack_name" id="stack_name" value="name" placeholder="Name" required>
-            <div class="invalid-feedback">
-              Please enter a Name.
-            </div>
           </div>
           <div class="form-group col-md-6">
             <label for="stack_version">Version</label>
             <input class="form-control" name="stack_version" id="stack_version" value="0.1.0" placeholder="0.1.0" required>
-            <div class="invalid-feedback">
-              Please enter a Version.
-            </div>
           </div>
         </div>
 
