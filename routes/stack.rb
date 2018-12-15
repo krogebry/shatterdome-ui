@@ -25,13 +25,23 @@ get '/stack/create' do
       desc = "No description"
     end
 
-    stacks.push({
-                    description: desc,
-                    stack_class_name: stack_class_name
-                })
+    stacks.push(
+        description: desc,
+        stack_class_name: stack_class_name
+    )
   end
 
-  erb 'stack/create'.to_sym, {locals: {stacks: stacks}}
+  locals = {
+      stacks: stacks
+  }
+
+  if params.has_key?('saved_launch')
+    locals[:params] = DB['saved_launches'].find(_id: BSON::ObjectId(params['saved_launch'])).first
+  end
+
+  pp locals
+
+  erb 'stack/create'.to_sym, locals: locals
 end
 
 post '/stack/create' do
@@ -41,10 +51,10 @@ post '/stack/create' do
 
   if params.has_key?('network')
     config['network'] = {
-      vpc: {
-          Name: params['network']
-      },
-      subnet: params['subnet']
+        vpc: {
+            Name: params['network']
+        },
+        subnet: params['subnet']
     }
   end
 
@@ -58,8 +68,8 @@ post '/stack/create' do
     config['public'] = params['public']
     config['ports'] = [params['port'].to_i]
     config['health_check'] = {
-      url: params['health_check_url'],
-      code: params['health_check_code']
+        url: params['health_check_url'],
+        code: params['health_check_code']
     }
 
     config['cpu'] = 1024
@@ -74,15 +84,15 @@ post '/stack/create' do
     }
 
     stack = Shatterdome.get_stack_by_name(params['cluster'])
-    config['cluster_name'] = stack['tags'].select{|t| t['key'] == 'Name' }.first['value']
-    config['cluster_version'] = stack['tags'].select{|t| t['key'] == 'Version' }.first['value']
+    config['cluster_name'] = stack['tags'].select {|t| t['key'] == 'Name'}.first['value']
+    config['cluster_version'] = stack['tags'].select {|t| t['key'] == 'Version'}.first['value']
   end
 
   if params['stack_type'] == 'OpenVPN'
     config['ami'] = {Version: params['ami']}
   end
 
-  config['capacity'] = { min: 1, max: 1, desired: 1 }
+  config['capacity'] = {min: 1, max: 1, desired: 1}
 
   config['capacity']['type'] = case params['stack_size']
                                when 'small'
@@ -112,5 +122,5 @@ post '/stack/create' do
 
   message_id = resp.message_id
 
-  erb 'stack/create_complete'.to_sym, {locals: { message_id: message_id }}
+  erb 'stack/create_complete'.to_sym, {locals: {message_id: message_id}}
 end

@@ -5,7 +5,18 @@
 </style>
 
 <script>
-    $(function () {
+let params = <%= params.to_json %>;
+
+function venom(){
+    console.log("venom");
+    $.each(params, function(k,v){
+        if(k != "stack_type"){
+            $("#"+k).val(v).change();
+        }
+    });
+}
+
+$(function () {
         let el = $("#options");
 
         $("#stack_type").on('change', function(e){
@@ -16,6 +27,7 @@
                 success: function(data, r){
                     el.empty();
                     el.append(data.content);
+                    venom();
                     el.show();
                 }
             })
@@ -44,6 +56,10 @@
                 }
             })
         })
+
+        <% if defined?(:params) %>
+        $('#stack_type option:contains("<%= params['stack_type'] %>")').prop('selected', true).change();
+        <% end %>
     })
 </script>
 
@@ -89,7 +105,7 @@
         <table style="width: 100%">
           <tr>
             <td style="text-align: left"> <button type="button" id="save" class="btn btn-primary">Save this configuration</button> </td>
-            <td style="text-align: right"> <button type="submit" class="btn btn-primary">Create</button> </td>
+            <td style="text-align: right"> <button type="submit" class="btn btn-primary">Launch</button> </td>
           </tr>
         </table>
       </form>
