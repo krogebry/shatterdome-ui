@@ -14,7 +14,7 @@ def api_authenticate
 end
 
 get '/api/1.0/save' do
-  data = params.merge({ owner_email: session['user'] })
+  data = params.merge({owner_email: session['user']})
   pp data
   DB['saved_launches'].insert_one(data)
   {success: true}.to_json
@@ -28,17 +28,15 @@ end
 get '/api/1.0/stacks' do
   stacks = Shatterdome.get_stacks({})
 
-  pp stacks
-
   data = []
 
   stacks.each do |stack|
-    data.push({
-                  stack_name: stack['stack_name'],
-                  status: stack['stack_status'],
-                  owner: 'owner',
-                  type: 'type'
-              })
+    data.push(
+      stack_name: stack['stack_name'],
+      status: stack['stack_status'],
+      owner: 'owner',
+      type: 'type'
+    )
   end
 
   pp data
@@ -48,20 +46,20 @@ end
 
 get '/api/1.0/stack/elements/:stack_type' do
   config = Psych.safe_load(File.read(File.join('etc', 'stacks.yaml')), [], [], true)
-  el = config.select{|c| c['type'] == params['stack_type']}.first
+  el = config.select {|c| c['type'] == params['stack_type']}.first
 
-  el = { 'elements' => [] } if el.nil?
+  el = {'elements' => []} if el.nil?
 
   content = ""
   el['elements'].each do |el_name|
-    if params['stack_type']  == 'ECSService' && el_name == 'ecsservice'
+    if params['stack_type'] == 'ECSService' && el_name == 'ecsservice'
       zones = Shatterdome.get_hosted_zones['hosted_zones']
       clusters = Shatterdome.get_stacks({Role: 'Cluster'})
       content += erb "stack/elements/#{el_name}".to_sym, {layout: :empty, locals: {clusters: clusters, zones: zones}}
 
     elsif params['stack_type'] == 'OpenVPN' && el_name == 'openvpn'
       amis = Shatterdome.get_amis({Role: 'OpenVPN'}, {'is-public' => false})
-      versions = amis.map{|ami| ami['tags'].select{|t| t['key'] == 'Version'}.first['value']}
+      versions = amis.map {|ami| ami['tags'].select {|t| t['key'] == 'Version'}.first['value']}
       content += erb "stack/elements/#{el_name}".to_sym, {layout: :empty, locals: {versions: versions}}
 
     else
