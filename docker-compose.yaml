@@ -1,0 +1,43 @@
+---
+version: '3'
+services:
+  worker:
+    build:
+      context: ../shatterdome-worker
+      dockerfile: Dockerfile
+    environment:
+      - AWS_PROFILE=${AWS_PROFILE}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID}
+      - MEMC_HOST=cache
+    volumes:
+      - ~/.aws:/root/.aws
+  ui:
+    depends_on:
+      - worker
+      - db
+      - cache
+    environment:
+      - AWS_PROFILE=${AWS_PROFILE}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID}
+      - MEMC_HOST=cache
+    volumes:
+      - ~/.aws:/root/.aws
+    ports:
+      - 4567:4567
+    build:
+      context: ./
+      dockerfile: Dockerfile
+  db:
+    image: mongo
+    ports:
+      - 27017:27017
+#  gem:
+#    image: spoonest/geminabox:latest
+#    ports:
+#      - 9292:9292
+  cache:
+    image: memcached
+    ports:
+      - 11211:11211
