@@ -17,3 +17,9 @@ pipelines:
 definitions:
   caches:
     bundler: ./vendor
+
+  services:
+    cache:
+      image: memcached
+    mongo:
+      image: mongo
