@@ -10,9 +10,10 @@ pipelines:
     - step:
         caches:
           - bundler
-        script: # Modify the commands below to build your repository.
+        script:
           - bundle install
-
+          - bundle exec rspec spec/all.rb
+          # - rubocop
 definitions:
   caches:
     bundler: ./vendor
