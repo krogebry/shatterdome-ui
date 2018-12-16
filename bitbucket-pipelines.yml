@@ -14,8 +14,6 @@ pipelines:
           - bundle install
           - bundle exec rspec spec/all.rb
           # - rubocop
-
 definitions:
   caches:
     bundler: ./vendor
-
