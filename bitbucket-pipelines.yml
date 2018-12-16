@@ -3,7 +3,7 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
-image: ruby:2.4.0
+image: ruby:2.5.0
 
 pipelines:
   default:
@@ -14,6 +14,15 @@ pipelines:
           - bundle install
           - bundle exec rspec spec/all.rb
           # - rubocop
+        services:
+          - db
+          - cache
 definitions:
   caches:
     bundler: ./vendor
+
+  services:
+    cache:
+      image: memcached
+    db:
+      image: mongo
