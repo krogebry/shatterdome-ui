@@ -26,7 +26,8 @@ describe "API interactions" do
   end
 
   it "Should return the correct OpenVPN elements" do
-    allow(Shatterdome).to receive(:get_amis).and_return(%w(0.1.0 0.2.0))
+    images = JSON::parse(File.read(File.join('spec', 'fixtures', 'amis.json')))['images']
+    allow(Shatterdome).to receive(:get_amis).and_return(images)
 
     get "/api/1.0/stack/elements/OpenVPN"
     expect(last_response.status).to eq(200)
