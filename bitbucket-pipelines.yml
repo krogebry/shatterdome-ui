@@ -12,6 +12,7 @@ pipelines:
           - bundler
         script:
           - bundle install
+          - aws s3 ls
           - bundle exec rspec spec/all.rb
           # - rubocop
 definitions:
