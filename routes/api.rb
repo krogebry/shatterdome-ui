@@ -33,13 +33,11 @@ get '/api/1.0/stacks' do
   stacks.each do |stack|
     data.push(
       stack_name: stack['stack_name'],
-      status: stack['stack_status'],
+      stack_status: stack['stack_status'],
       owner: 'owner',
       type: 'type'
     )
   end
-
-  pp data
 
   {data: data}.to_json
 end

@@ -24,3 +24,6 @@ gem 'colorize'
 gem 'deep_merge'
 gem 'ruby_deep_clone'
 
+gem 'rspec'
+gem 'rack-test'
+gem 'simplecov'
