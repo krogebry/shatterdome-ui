@@ -39,8 +39,6 @@ get '/stack/create' do
     locals[:params] = DB['saved_launches'].find(_id: BSON::ObjectId(params['saved_launch'])).first
   end
 
-  pp locals
-
   erb 'stack/create'.to_sym, locals: locals
 end
 

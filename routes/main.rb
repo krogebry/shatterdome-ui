@@ -41,3 +41,6 @@ get '/healthz' do
   {success: true}.to_json
 end
 
+get '/saved' do
+  erb :saved
+end
