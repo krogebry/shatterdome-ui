@@ -1,72 +1,97 @@
 <style type="text/css">
-  .hidden{
+  .hidden {
     display: none;
   }
 </style>
 
 <script>
     let params = <%= params.to_json %>;
+    let el = null;
 
-    function venom(){
-        console.log("venom");
-        $.each(params, function(k,v){
-            if(k != "stack_type"){
-                $("#"+k).val(v).change();
-            }
-        });
-    }
+    function save_launch_config(){
+        form = $(".needs-validation")[0];
 
-    $(function () {
-        let el = $("#options");
+        // var validation = Array.prototype.filter.call(forms, function (form) {
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+        } else {
+            console.log('Saving config');
+            fields = {
+                stack_name: $("#stack_name").val(),
+                stack_type: $("#stack_type").val(),
+                stack_size: $("#stack_size").val(),
+                stack_version: $("#stack_version").val()
+            };
 
-        $("#stack_type").on('change', function(e){
-            let stack_type = $("#stack_type option:selected").val();
+            fields['launch_name'] = params['launch_name'];
+
+            el.find(":input").each(function (i) {
+                let input_el = $(this);
+                fields[input_el.attr('name')] = input_el.val();
+            });
+
+            console.log(fields);
+
             $.ajax({
-                url: "/api/1.0/stack/elements/"+ stack_type,
-                processData: true,
-                success: function(data, r){
-                    el.empty();
-                    el.append(data.content);
-                    venom();
-                    el.show();
+                url: "/api/1.0/save",
+                data: fields,
+                success: function (r, s) {
+                    console.log(s);
                 }
             })
+        }
+        form.classList.add('was-validated');
+    }
+
+    function reset_params(){
+        params['stack_name'] = '';
+        params['stack_size'] = 'small';
+        params['stack_version'] = '';
+    };
+
+    function update_form() {
+        // console.log(params);
+        $.each(params, function (k, v) {
+            if (k != "stack_type") {
+                $("#" + k).val(v).change();
+            }
+        });
+    };
+
+    $(function () {
+        el = $("#options");
+
+        $("#stack_type").on('change', function (e) {
+            let stack_type = $("#stack_type option:selected").val();
+            $.ajax({
+                url: "/api/1.0/stack/elements/" + stack_type,
+                processData: true,
+                success: function (data, r) {
+                    el.empty();
+                    el.append(data.content);
+                    update_form();
+                    el.show();
+                }
+            });
         });
 
-        $("#save").on('click', function(e){
-            var forms = document.getElementsByClassName('needs-validation');
-            console.log(forms)
+        // $("#save").on('click', function (e) { });
 
-            var validation = Array.prototype.filter.call(forms, function(form) {
-                if (form.checkValidity() === false) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                else{
-                    console.log('Saving config');
-                    fields = {
-                        stack_name: $("#stack_name").val(),
-                        stack_type: $("#stack_type").val(),
-                        stack_size: $("#stack_size").val(),
-                        stack_version: $("#stack_version").val()
-                    };
+        $("#save").on('click', function (e) {
+            save_launch_config();
+        })
 
-                    el.find(":input").each(function(i){
-                        let input_el = $(this);
-                        fields[input_el.attr('name')] = input_el.val();
-                    });
-                    console.log(fields);
+        $("#do_save").on('click', function(e){
+            params['launch_name'] = $("#launch-name").val();
+            params['launch_desc'] = $("#launch-desc").val();
+            save_launch_config();
+            $("#saveAsModal").modal("toggle");
+        });
 
-                    $.ajax({
-                        url: "/api/1.0/save",
-                        data: fields,
-                        success: function(r, s){
-                            console.log(s);
-                        }
-                    })
-                }
-                form.classList.add('was-validated');
-            });
+        $("#reset").on('click', function(e){
+            reset_params();
+            $("#stack_type").val('select').change();
         })
 
         <% if defined?(:params) %>
@@ -84,14 +109,14 @@
         <div class="form-row">
           <div class="form-group col-md-6">
             <label for="stack_name">Name</label>
-            <input class="form-control" name="stack_name" id="stack_name" value="name" placeholder="Name" required>
+            <input class="form-control" name="stack_name" id="stack_name" value="" placeholder="Name" required>
             <div class="invalid-feedback">
               Please provide a Name.
             </div>
           </div>
           <div class="form-group col-md-6">
             <label for="stack_version">Version</label>
-            <input class="form-control" name="stack_version" id="stack_version" value="0.1.0" placeholder="0.1.0" required>
+            <input class="form-control" name="stack_version" id="stack_version" value="" placeholder="0.1.0" required>
             <div class="invalid-feedback">
               Please provide a Version.
             </div>
@@ -111,7 +136,7 @@
           <div class="form-group col-md-6">
             <label for="stack_type">Type</label>
             <select id="stack_type" name="stack_type" class="form-control">
-              <option slected>Select</option>
+              <option selected value="select">Select</option>
               <% stacks.each do |s| %>
                 <option value="<%= s[:stack_class_name] %>"><%= s[:stack_class_name] %></option>
               <% end %>
@@ -119,12 +144,35 @@
           </div>
         </div>
 
-        <div id="options" class="hidden"> </div>
+        <div id="options" class="hidden"></div>
 
         <table style="width: 100%">
           <tr>
-            <td style="text-align: left"> <button type="button" id="save" class="btn btn-primary">Save this configuration</button> </td>
-            <td style="text-align: right"> <button type="submit" class="btn btn-primary">Launch</button> </td>
+            <td>
+              <div class="dropdown show">
+                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Launch Configuration
+                </a>
+
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  <button class="dropdown-item" id="save" type="button">Save</button>
+<!--                  <button class="dropdown-item" id="save_as" type="button">Save as...</button>-->
+                  <button type="button" class="dropdown-item" data-toggle="modal" data-target="#saveAsModal">Save as</button>
+
+                  <div class="dropdown-divider"></div>
+                  <button class="dropdown-item" id="reset" type="button">Reset</button>
+                  <% if defined?(:params) %>
+                  <div class="dropdown-divider"></div>
+                  <button class="dropdown-item" id="delete" type="button">Delete</button>
+                  <% end %>
+                </div>
+              </div>
+            </td>
+
+            <td style="text-align: right">
+              <button type="submit" class="btn btn-primary">Launch</button>
+            </td>
+
           </tr>
         </table>
       </form>
@@ -132,3 +180,32 @@
     </td>
   </tr>
 </table>
+
+<div class="modal fade" id="saveAsModal" tabindex="-1" role="dialog" aria-labelledby="saveAsModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="saveAsModalLabel">Save launch configuration</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="launch-name" id="lbl-launch-name" class="col-form-label">Name:</label>
+            <input type="text" class="form-control" id="launch-name">
+          </div>
+          <div class="form-group">
+            <label for="launch-desc" id="launch-desc" class="col-form-label">Description:</label>
+            <textarea class="form-control" id="launch-desc"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="do_save">Save</button>
+      </div>
+    </div>
+  </div>
+</div>

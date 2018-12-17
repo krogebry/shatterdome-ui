@@ -1,0 +1,37 @@
+<script>
+    $(document).ready(function () {
+        $('#saved').DataTable({
+            ajax: '/api/1.0/saved',
+            serverSide: true,
+            columns: [
+                {
+                    data: 'launch_name',
+                    name: 'launch_name',
+                    render: function (data, type, row, meta) {
+                        return '<a href="/stack/create?saved_launch=' + row.id + '">' + data + '</a>';
+                    }
+                },
+                {data: 'stack_name', name: 'stack_name'},
+                {data: 'version', name: 'version'}
+            ],
+        });
+    });
+</script>
+
+<table id="saved" class="table table-stripped table-bordered" style="width:100%">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Stack name</th>
+    <th>Version</th>
+  </tr>
+  </thead>
+
+  <tfoot>
+  <tr>
+    <th>Name</th>
+    <th>Stack name</th>
+    <th>Version</th>
+  </tr>
+  </tfoot>
+</table>

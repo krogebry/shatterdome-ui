@@ -15,8 +15,10 @@ end
 
 get '/api/1.0/save' do
   data = params.merge({owner_email: session['user']})
-  pp data
-  DB['saved_launches'].insert_one(data)
+  DB['saved_launches'].find_one_and_update(
+      { launch_name: data['launch_name'] },
+      { "$set" => data },
+      { :upsert => true })
   {success: true}.to_json
 end
 
@@ -40,6 +42,20 @@ get '/api/1.0/stacks' do
   end
 
   {data: data}.to_json
+end
+
+get '/api/1.0/saved' do
+  saved = DB['saved_launches'].find({ owner_email: session['user'] })
+  data = []
+  saved.each do |save|
+    data.push(
+      id: save['_id'].to_s,
+      version: save['version'],
+      stack_name: save['stack_name'],
+      launch_name: save['launch_name']
+    )
+  end
+  {success: true, data: data}.to_json
 end
 
 get '/api/1.0/stack/elements/:stack_type' do
@@ -69,4 +85,5 @@ get '/api/1.0/stack/elements/:stack_type' do
   content_type 'application/json'
   {success: true, content: content}.to_json
 end
+
 
