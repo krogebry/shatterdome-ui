@@ -8,14 +8,14 @@ get '/auth/logout' do
 end
 
 def auth_user(params)
-  true
+  params[:email] ? true : false
 end
 
 post '/auth/login' do
   if auth_user(params)
     session['user'] = params[:email]
   else
-    redirect '/login?auth_failed'
+    redirect '/auth/login?auth_failed'
   end
 
   redirect '/'

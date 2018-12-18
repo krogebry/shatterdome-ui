@@ -1,13 +1,3 @@
-get '/stacks' do
-  erb :stacks
-end
-
-get '/stack/create/ecs_service' do
-  ## Active ECS stacks
-  stacks = Shatterdome::get_stacks({Role: 'Cluster'})
-
-  erb 'stack/create_ecs_service'.to_sym, {locals: {stacks: stacks}}
-end
 
 get '/stack/create' do
   stacks = []
@@ -43,7 +33,7 @@ get '/stack/create' do
 end
 
 post '/stack/create' do
-  pp params
+  # pp params
 
   config = {}
 
@@ -108,17 +98,10 @@ post '/stack/create' do
       config: config,
       version: params['stack_version']
   }
-  pp job
+  # pp job
 
-  queue_url = "https://sqs.#{ENV['AWS_REGION']}.amazonaws.com/#{ENV['AWS_ACCOUNT_ID']}/shatterdome_stacks"
-  @client = Shatterdome.get_client('sqs')
-  resp = @client.send_message({
-                                  queue_url: queue_url,
-                                  message_body: job.to_json,
-                                  delay_seconds: 1
-                              })
+  worker = ShatterdomeWorker::Workers::Stack.new
+  worker.send_job(job)
 
-  message_id = resp.message_id
-
-  erb 'stack/create_complete'.to_sym, {locals: {message_id: message_id}}
+  erb 'stack/create_complete'.to_sym, {locals: {message_id: job_id}}
 end
