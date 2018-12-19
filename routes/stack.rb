@@ -33,7 +33,7 @@ get '/stack/create' do
 end
 
 post '/stack/create' do
-  # pp params
+  pp params
 
   config = {}
 
@@ -46,7 +46,7 @@ post '/stack/create' do
     }
   end
 
-  ## Specific hook for ECSService.
+  # Specific hook for ECSService.
   if params.has_key?('port')
     config['dns'] = {
         name: params['dns'],
@@ -59,6 +59,11 @@ post '/stack/create' do
         url: params['health_check_url'],
         code: params['health_check_code']
     }
+
+    config['environment'] = {}
+    params['env_key'].each do |i, key|
+      config['environment'][key] = params['env_val'][i]
+    end
 
     config['cpu'] = 1024
     config['num'] = 1
@@ -91,6 +96,8 @@ post '/stack/create' do
                                  'c4.large'
                                end
 
+  pp config
+
   job = {
       name: params['stack_name'],
       type: params['stack_type'],
@@ -100,8 +107,10 @@ post '/stack/create' do
   }
   # pp job
 
-  worker = ShatterdomeWorker::Workers::Stack.new
-  worker.send_job(job)
+  # worker = ShatterdomeWorker::Workers::Stack.new
+  # job_id = worker.send_job(job)
+  job_id = 'job_id'
 
-  erb 'stack/create_complete'.to_sym, {locals: {message_id: job_id}}
+  # erb 'stack/create_complete'.to_sym, {locals: {message_id: job_id}}
+  {success: true, job_id: job_id}.to_json
 end

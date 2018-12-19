@@ -16,6 +16,17 @@ end
 
 post '/api/1.0/launch_config' do
   data = params.merge({owner_email: session['user']})
+
+  if params.has_key?('env_key')
+    data['environment'] = {}
+    params['env_key'].each do |i, key|
+      data['environment'][key] = params['env_val'][i]
+    end
+
+    data.delete('env_key')
+    data.delete('env_val')
+  end
+
   DB['saved_launches'].find_one_and_update(
       { launch_name: data['launch_name'] },
       { "$set" => data },

@@ -1,4 +1,3 @@
-
 describe "Unauthenticated stack routes" do
   include Rack::Test::Methods
 
@@ -28,21 +27,4 @@ describe "Authenticated stack pages" do
     expect(last_response.status).to eq(200)
     expect(last_response.body).to match(/action="\/stack\/create"/)
   end
-
-  # describe "create openvpn stack" do
-  #   before do
-  #     # allow(ShatterdomeWorker::Workers::Stack).to receive(:send_job).and_return('job_id')
-  #     @stack = JSON::parse(File.read(File.join('spec', 'fixtures', 'openvpn_stack.json')))
-  #   end
-  #
-  #   it "should create the job" do
-  #     post '/stack/create', @stack
-  #     File.open('/tmp/stack', 'w') do |f|
-  #       f.write last_response.body
-  #     end
-  #     expect(last_response.status).to eq(200)
-  #   end
-  # end
-
 end
-

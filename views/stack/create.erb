@@ -58,6 +58,15 @@
                 $("#" + k).val(v).change();
             }
         });
+
+        if(params['stack_type'] == "ECSService"){
+            // Create env elements
+            let i = 0;
+            $.each(params['environment'], function(k, v){
+                $("#env_key_"+ i).val(k);
+                $("#env_val_"+ i).val(v);
+            })
+        }
     };
 
     $(function () {

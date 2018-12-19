@@ -13,8 +13,6 @@ def api_authenticate
   end
 end
 
-
-
 get '/api/1.0/flush_cache' do
   CACHE.flush
   {success: true}.to_json
@@ -48,6 +46,7 @@ get '/api/1.0/stack/elements/:stack_type' do
     if params['stack_type'] == 'ECSService' && el_name == 'ecs_service'
       zones = Shatterdome.get_hosted_zones['hosted_zones']
       clusters = Shatterdome.get_stacks({Role: 'Cluster'})
+
       content += erb "stack/elements/#{el_name}".to_sym, {layout: :empty, locals: {clusters: clusters, zones: zones}}
 
     elsif params['stack_type'] == 'OpenVPN' && el_name == 'openvpn'

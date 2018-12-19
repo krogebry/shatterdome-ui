@@ -1,13 +1,10 @@
 source 'https://rubygems.org'
 
-gem 'aws-sdk'
-gem 'shatterdome', '=0.1.7'
-gem 'shatterdome-worker', '=0.1.8'
-
-# gem 'shatterdome', '=0.1.7', source: 'https://gem.fury.io/edos/'
-# gem 'shatterdome-worker', '=0.1.8', source: 'https://gem.fury.io/edos/'
+gem 'shatterdome', '=0.1.7', source: 'https://gem.fury.io/edos/'
+gem 'shatterdome-worker', '=0.1.8', source: 'https://gem.fury.io/edos/'
 
 gem 'mongo'
+gem 'aws-sdk'
 
 gem 'rack'
 gem 'sinatra-static'
