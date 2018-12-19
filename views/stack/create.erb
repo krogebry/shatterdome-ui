@@ -31,11 +31,12 @@
                 fields[input_el.attr('name')] = input_el.val();
             });
 
-            console.log(fields);
+            // console.log(fields);
 
             $.ajax({
-                url: "/api/1.0/save",
+                url: "/api/1.0/launch_config",
                 data: fields,
+                method: 'post',
                 success: function (r, s) {
                     console.log(s);
                 }
@@ -57,6 +58,15 @@
                 $("#" + k).val(v).change();
             }
         });
+
+        if(params['stack_type'] == "ECSService"){
+            // Create env elements
+            let i = 0;
+            $.each(params['environment'], function(k, v){
+                $("#env_key_"+ i).val(k);
+                $("#env_val_"+ i).val(v);
+            })
+        }
     };
 
     $(function () {

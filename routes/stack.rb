@@ -1,13 +1,3 @@
-get '/stacks' do
-  erb :stacks
-end
-
-get '/stack/create/ecs_service' do
-  ## Active ECS stacks
-  stacks = Shatterdome::get_stacks({Role: 'Cluster'})
-
-  erb 'stack/create_ecs_service'.to_sym, {locals: {stacks: stacks}}
-end
 
 get '/stack/create' do
   stacks = []
@@ -56,7 +46,7 @@ post '/stack/create' do
     }
   end
 
-  ## Specific hook for ECSService.
+  # Specific hook for ECSService.
   if params.has_key?('port')
     config['dns'] = {
         name: params['dns'],
@@ -69,6 +59,11 @@ post '/stack/create' do
         url: params['health_check_url'],
         code: params['health_check_code']
     }
+
+    config['environment'] = {}
+    params['env_key'].each do |i, key|
+      config['environment'][key] = params['env_val'][i]
+    end
 
     config['cpu'] = 1024
     config['num'] = 1
@@ -101,6 +96,8 @@ post '/stack/create' do
                                  'c4.large'
                                end
 
+  pp config
+
   job = {
       name: params['stack_name'],
       type: params['stack_type'],
@@ -108,17 +105,12 @@ post '/stack/create' do
       config: config,
       version: params['stack_version']
   }
-  pp job
+  # pp job
 
-  queue_url = "https://sqs.#{ENV['AWS_REGION']}.amazonaws.com/#{ENV['AWS_ACCOUNT_ID']}/shatterdome_stacks"
-  @client = Shatterdome.get_client('sqs')
-  resp = @client.send_message({
-                                  queue_url: queue_url,
-                                  message_body: job.to_json,
-                                  delay_seconds: 1
-                              })
+  # worker = ShatterdomeWorker::Workers::Stack.new
+  # job_id = worker.send_job(job)
+  job_id = 'job_id'
 
-  message_id = resp.message_id
-
-  erb 'stack/create_complete'.to_sym, {locals: {message_id: message_id}}
+  # erb 'stack/create_complete'.to_sym, {locals: {message_id: job_id}}
+  {success: true, job_id: job_id}.to_json
 end

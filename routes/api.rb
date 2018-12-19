@@ -13,15 +13,6 @@ def api_authenticate
   end
 end
 
-get '/api/1.0/save' do
-  data = params.merge({owner_email: session['user']})
-  DB['saved_launches'].find_one_and_update(
-      { launch_name: data['launch_name'] },
-      { "$set" => data },
-      { :upsert => true })
-  {success: true}.to_json
-end
-
 get '/api/1.0/flush_cache' do
   CACHE.flush
   {success: true}.to_json
@@ -44,20 +35,6 @@ get '/api/1.0/stacks' do
   {data: data}.to_json
 end
 
-get '/api/1.0/saved' do
-  saved = DB['saved_launches'].find({ owner_email: session['user'] })
-  data = []
-  saved.each do |save|
-    data.push(
-      id: save['_id'].to_s,
-      version: save['version'],
-      stack_name: save['stack_name'],
-      launch_name: save['launch_name']
-    )
-  end
-  {success: true, data: data}.to_json
-end
-
 get '/api/1.0/stack/elements/:stack_type' do
   config = Psych.safe_load(File.read(File.join('etc', 'stacks.yaml')), [], [], true)
   el = config.select {|c| c['type'] == params['stack_type']}.first
@@ -66,9 +43,10 @@ get '/api/1.0/stack/elements/:stack_type' do
 
   content = ""
   el['elements'].each do |el_name|
-    if params['stack_type'] == 'ECSService' && el_name == 'ecsservice'
+    if params['stack_type'] == 'ECSService' && el_name == 'ecs_service'
       zones = Shatterdome.get_hosted_zones['hosted_zones']
       clusters = Shatterdome.get_stacks({Role: 'Cluster'})
+
       content += erb "stack/elements/#{el_name}".to_sym, {layout: :empty, locals: {clusters: clusters, zones: zones}}
 
     elsif params['stack_type'] == 'OpenVPN' && el_name == 'openvpn'
@@ -86,4 +64,4 @@ get '/api/1.0/stack/elements/:stack_type' do
   {success: true, content: content}.to_json
 end
 
-
+require "#{WEB_ROOT}/routes/api/launch_config"

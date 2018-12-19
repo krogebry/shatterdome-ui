@@ -1,0 +1,11 @@
+{
+  "launch_name": "OpenVPN",
+  "ami": "0.1.2",
+  "network": "management",
+  "owner_email": "bkroger@edos.io",
+  "stack_name": "ovpn",
+  "stack_size": "small",
+  "stack_type": "OpenVPN",
+  "stack_version": "0.1.3",
+  "subnet": "Bastion"
+}

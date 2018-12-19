@@ -11,12 +11,21 @@ describe "Main routes" do
     expect(last_response.status).to eq(302)
   end
 
-  it "show the proper login page" do
-    get '/auth/login'
+  it "Version works" do
+    get '/version'
     expect(last_response.status).to eq(200)
-    expect(last_response.body).to include('Manager Login')
+    json_response = JSON::parse(last_response.body)
+    expect(json_response).to include('version')
+    expect(json_response['version']).to eq(ShatterdomeUI::VERSION)
   end
 
+  it "returns the correct information for health checking" do
+    get '/healthz'
+    expect(last_response.status).to eq(200)
+    json_response = JSON::parse(last_response.body)
+    expect(json_response).to include('success')
+    expect(json_response['success']).to eq(true)
+  end
 end
 
 describe "Authenticated pages" do
@@ -41,5 +50,4 @@ describe "Authenticated pages" do
     expect(last_response.body).to include('Cloud Manager')
   end
 end
-
 
