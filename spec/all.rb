@@ -12,6 +12,7 @@ SimpleCov.start
 
 require 'shatterdome/shatterdome'
 require 'shatterdome-worker/worker'
+require 'shatterdome-worker/version'
 
 $LOAD_PATH.push('lib') if File.path(__FILE__).match(/\./)
 

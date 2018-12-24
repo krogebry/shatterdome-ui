@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'shatterdome', '=0.1.7', source: 'https://gem.fury.io/edos/'
+gem 'shatterdome', '=0.1.8', source: 'https://gem.fury.io/edos/'
 gem 'shatterdome-worker', '=0.1.8', source: 'https://gem.fury.io/edos/'
 
 gem 'mongo'
