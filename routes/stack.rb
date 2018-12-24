@@ -33,7 +33,7 @@ get '/stack/create' do
 end
 
 post '/stack/create' do
-  pp params
+  # pp params
 
   config = {}
 
@@ -96,7 +96,7 @@ post '/stack/create' do
                                  'c4.large'
                                end
 
-  pp config
+  # pp config
 
   job = {
       name: params['stack_name'],
@@ -105,12 +105,29 @@ post '/stack/create' do
       config: config,
       version: params['stack_version']
   }
-  # pp job
 
-  # worker = ShatterdomeWorker::Workers::Stack.new
-  # job_id = worker.send_job(job)
-  job_id = 'job_id'
+  worker = ShatterdomeWorker::Workers::Stack.new
+  job_id = worker.send_job(job)
 
-  # erb 'stack/create_complete'.to_sym, {locals: {message_id: job_id}}
-  {success: true, job_id: job_id}.to_json
+  erb 'stack/create_complete'.to_sym, {locals: {message_id: job_id}}
+end
+
+get '/stack/:stack_name' do
+  stack = Shatterdome.get_stack_by_name(params[:stack_name])
+  cost_per_hour = 0.0116
+  erb 'stack/view'.to_sym, {locals: {stack: stack, cost_per_hour: cost_per_hour}}
+end
+
+post '/stack/:stack_name/scale' do
+  pp params
+  stack = Shatterdome::get_stack_by_name(params[:stack_name])
+  # pp stack
+  stack_tag_name = stack['tags'].select{|t| t['key'] == 'Name'}.first['value']
+  stack_tag_version = stack['tags'].select{|t| t['key'] == 'Version'}.first['value']
+
+  stack = Shatterdome::Stacks::GenericASG.new(stack_tag_name, stack_tag_version)
+  LOG.info("ASG: #{params[:asg_min]}/#{params[:asg_max]}/#{params[:asg_desired]}")
+  stack.scale(params[:asg_min], params[:asg_max], params[:asg_desired])
+
+  {p: @params}.to_json
 end

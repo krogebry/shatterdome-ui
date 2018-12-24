@@ -34,7 +34,11 @@ get '/' do
 end
 
 get '/version' do
-  {version: ShatterdomeUI::VERSION}.to_json
+  {
+    shatterdome: Shatterdome::VERSION,
+    shatterdome_ui: ShatterdomeUI::VERSION,
+    shatterdome_worker: ShatterdomeUI::VERSION
+  }.to_json
 end
 
 get '/healthz' do

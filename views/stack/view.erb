@@ -1,0 +1,156 @@
+<link rel="stylesheet" href="/css/bootstrap-slider.min.css"/>
+<script src="/js/bootstrap-slider.min.js"></script>
+<script>
+  let cost_per_instance = <%= cost_per_hour %>;
+
+  let asg_min = 1;
+  let asg_max = 1;
+  let asg_desired = 1;
+
+  let el_min, el_max, el_desired;
+  let min_el_cost_per_hour, max_el_cost_per_hour, desired_el_cost_per_hour
+  let min_el_cost_per_day, max_el_cost_per_day, desired_el_cost_per_day
+  let slider_min, slider_max, slider_desired;
+
+  $(function () {
+    el_min = $("#r_min");
+    el_max = $("#r_max");
+    el_desired = $("#r_desired");
+
+    min_el_cost_per_day = $("#min_cost_per_day");
+    min_el_cost_per_hour = $("#min_cost_per_hour");
+    min_el_cost_per_month = $("#min_cost_per_month");
+
+    max_el_cost_per_day = $("#max_cost_per_day");
+    max_el_cost_per_hour = $("#max_cost_per_hour");
+    max_el_cost_per_month = $("#max_cost_per_month");
+
+    desired_el_cost_per_day = $("#desired_cost_per_day");
+    desired_el_cost_per_hour = $("#desired_cost_per_hour");
+    desired_el_cost_per_month = $("#desired_cost_per_month");
+
+    slider_min = $('#slider_min').slider({}).on('slide', function(s){
+        asg_min = s.value;
+        el_min.html(asg_min);
+        min_el_cost_per_hour.html("$" + Number((cost_per_instance * asg_min).toFixed(3)));
+        min_el_cost_per_day.html("$" + Number(((cost_per_instance * asg_min)*24)).toFixed(3));
+        min_el_cost_per_month.html("$" + Number((((cost_per_instance * asg_min)*24)*30)).toFixed(3));
+
+        if(asg_max < asg_min){
+            slider_max.slider('setValue', asg_min, true);
+        }
+
+        if(asg_desired < asg_min){
+            slider_desired.slider('setValue', asg_min, true);
+        }
+    });
+
+    slider_max = $('#slider_max').slider({}).on('slide', function(s) {
+        asg_max = s.value;
+        el_max.html(asg_max);
+
+        max_el_cost_per_hour.html("$" + Number((cost_per_instance * asg_max).toFixed(3)));
+        max_el_cost_per_day.html("$" + Number(((cost_per_instance * asg_max)*24)).toFixed(3));
+        max_el_cost_per_month.html("$" + Number((((cost_per_instance * asg_max)*24)*30)).toFixed(3));
+
+        if(asg_min > asg_max){
+            slider_min.slider('setValue', asg_max, true);
+        }
+    });
+
+    slider_desired = $('#slider_desired').slider({}).on('slide', function(s) {
+        asg_desired = s.value;
+        el_desired.html(asg_desired);
+
+        desired_el_cost_per_hour.html("$" + Number((cost_per_instance * asg_desired).toFixed(3)));
+        desired_el_cost_per_day.html("$" + Number(((cost_per_instance * asg_desired)*24)).toFixed(3));
+        desired_el_cost_per_month.html("$" + Number((((cost_per_instance * asg_desired)*24)*30)).toFixed(3));
+
+        if(asg_min > asg_desired){
+            slider_desired.slider('setValue', asg_min, true);
+        }
+        if(asg_max < asg_desired){
+            slider_desired.slider('setValue', asg_max, true);
+        }
+    });
+  });
+</script>
+
+<h3> <%= stack['stack_name'] %> </h3>
+
+<!--
+Assuming this is a cluster type thing
+This should be conditional based on the type of stack.
+-->
+
+<div>Scale cluster</div>
+
+<form method="post" action="/stack/<%= stack['stack_name'] %>/scale">
+
+<table style="width: 100%;">
+  <thead>
+  <tr>
+    <th>Current</th>
+    <th>Requesting</th>
+    <th>Change</th>
+    <th>Requesting</th>
+    <th>~Cost per hour</th>
+    <th>~Cost per day</th>
+    <th>~Cost per month</th>
+  </tr>
+  </thead>
+
+  <tr>
+    <td>Min</td>
+    <td>1</td>
+    <td>
+      <input name="asg_min" id="slider_min" data-slider-id='ex1Slider' type="text" data-slider-min="0"
+             data-slider-max="20" data-slider-step="1" data-slider-value="1" />
+    </td>
+    <td id="r_min">1</td>
+    <td id="min_cost_per_hour">$0</td>
+    <td id="min_cost_per_day">$0</td>
+    <td id="min_cost_per_month">$0</td>
+  </tr>
+
+  <tr>
+    <td>Desired</td>
+    <td>1</td>
+    <td>
+      <input name="asg_desired" id="slider_desired" data-slider-id='ex1Slider' type="text" data-slider-min="0"
+             data-slider-max="20" data-slider-step="1" data-slider-value="1" />
+    </td>
+    <td id="r_desired">1</td>
+    <td id="desired_cost_per_hour">$0</td>
+    <td id="desired_cost_per_day">$0</td>
+    <td id="desired_cost_per_month">$0</td>
+  </tr>
+
+  <tr>
+    <td>Max</td>
+    <td>1</td>
+    <td>
+      <input name="asg_max" id="slider_max" data-slider-id='ex1Slider' type="text" data-slider-min="0"
+             data-slider-max="20" data-slider-step="1" data-slider-value="1" />
+    </td>
+    <td id="r_max">1</td>
+    <td id="max_cost_per_hour">$0</td>
+    <td id="max_cost_per_day">$0</td>
+    <td id="max_cost_per_month">$0</td>
+  </tr>
+
+  <tfoot>
+  <tr>
+    <th>
+      <button>Reset</button>
+    </th>
+    <th colspan="6" style="text-align:right">
+      <button>Submit</button>
+    </th>
+  </tr>
+  </tfoot>
+</table>
+
+</form>
+
+

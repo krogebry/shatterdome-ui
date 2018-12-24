@@ -15,8 +15,15 @@ describe "Main routes" do
     get '/version'
     expect(last_response.status).to eq(200)
     json_response = JSON::parse(last_response.body)
-    expect(json_response).to include('version')
-    expect(json_response['version']).to eq(ShatterdomeUI::VERSION)
+
+    expect(json_response).to include('shatterdome')
+    expect(json_response['shatterdome']).to eq(Shatterdome::VERSION)
+
+    expect(json_response).to include('shatterdome_ui')
+    expect(json_response['shatterdome_ui']).to eq(ShatterdomeUI::VERSION)
+
+    # expect(json_response).to include('shatterdome_worker')
+    # expect(json_response['shatterdome_worker']).to eq(ShatterdomeWorker::VERSION)
   end
 
   it "returns the correct information for health checking" do
