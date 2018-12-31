@@ -1,7 +1,8 @@
 source 'https://rubygems.org'
+source 'https://gemserver.krogebry.com/'
 
-gem 'shatterdome', '=0.1.8', source: 'https://gem.fury.io/edos/'
-gem 'shatterdome-worker', '=0.1.8', source: 'https://gem.fury.io/edos/'
+gem 'shatterdome', '=0.1.9'
+gem 'shatterdome-worker', '=0.1.8'
 
 gem 'mongo'
 gem 'aws-sdk'
